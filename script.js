@@ -27,24 +27,27 @@ const words = {
         "amer", "salé", "acide", "piquant", "fade", "léger", "lourd", "clair", "foncé", "lumineux",
         "sombre", "heure", "minute", "seconde", "jour", "semaine", "mois", "année", "printemps", "été", "automne",
         "hiver", "matin", "midi", "après-midi", "soir", "nuit", "hier", "aujourd'hui", "demain", "lundi",
-        "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche", "instant", "moment", "début", "fin"
+        "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche", "instant", "moment", "début", "fin", "tôt",
     ]
 }
-function getRandomInt() {
-    const max = 281;
+function getRandomInt(max) {
+    // get random number between 0 and max
     return Math.floor(Math.random() * max);
 }
 
 function generateTexte(words) {
-    let texte = '';
+    // generate a list of text with 100 words from the words list
+    let texte = [];
+    const max = words.easy.length;
     for (let i = 0; i < 100; i++) {
-        texte += ' ' + words.easy[getRandomInt()];
+        texte.push(words.easy[getRandomInt(max)]);
     }
     console.log(texte);
     return texte;
 }
 
 async function startGame() {
+    // init the game for ready to start
     //const words = await fetch("./words.json")
     //    .then(response => response.json())
     //    .then(data => data.words);
