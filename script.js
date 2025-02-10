@@ -1,3 +1,5 @@
+const nbWords = 100;
+
 async function getWords() {
     // get the list of words from the json file
     const response = await fetch('words.json');
@@ -11,11 +13,11 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
 
-function generateTexte(words) {
+function generateTexte(words,nbWords) {
     // generate a list of text with 100 words from the words list
     let texte = [];
     const max = words.length;
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < nbWords; i++) {
         texte.push(words[getRandomInt(max)]);
     }
     console.log(texte);
@@ -42,12 +44,21 @@ async function initGame() {
         oldInput.remove();
     }
 
+    // remove the end text
+    let endTexte = document.getElementById('endTexte');
+    if (endTexte) {
+        endTexte.remove();
+    }
+
     // generate the text
     let texte = document.createElement('p');
     texte.id = 'texte';
-    texteGenerated = generateTexte(words);
-    for (let i = 0; i < 100; i++) {
-        texte.innerText += texteGenerated[i] + " ";
+    texteGenerated = generateTexte(words,nbWords);
+    for (let i = 0; i < nbWords; i++) {
+        let mot = document.createElement('span');
+        mot.id = 'mot' + i;
+        mot.innerText = texteGenerated[i] + " ";
+        texte.appendChild(mot);
     }
     document.body.appendChild(texte);
 
@@ -57,9 +68,39 @@ async function initGame() {
     input.placeholder = 'Start typing...';
     input.addEventListener('input', startGame);
     document.body.appendChild(input);
+
+    score = 0;
+    motCount = 0;
 }
 
 function startGame() {
     // start the game
-    console.log('Game started');
+    let input = document.getElementById('input');
+    inputTexte = input.value;
+    texteCorrection = texteGenerated
+    if (inputTexte.includes(" ")) {
+        // verify each words in the input
+        input.value = '';
+        idMot = 'mot' + motCount;
+        if (inputTexte.trim().toLowerCase() === texteCorrection[0].trim().toLowerCase()) {
+            let mot = document.getElementById(idMot);
+            mot.style.color = 'green';
+            texteCorrection.shift();
+            score += 1;
+        } else {
+            let mot = document.getElementById(idMot);
+            mot.style.color = 'red';
+            texteCorrection.shift();
+        }
+        motCount += 1;
+        if (motCount === nbWords) {
+            // end of the game
+            input.remove();
+            let endTexte = document.createElement('p');
+            endTexte.innerText = 'Game Over! Your score is ' + score + '/'+ nbWords +'. Press Restart to play again.';
+            endTexte.id = 'endTexte';
+            document.body.appendChild(endTexte);
+            return;
+        }
+    }
 }
